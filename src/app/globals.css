@@ -91,3 +91,40 @@ html[data-booted] [data-boot-overlay] {
     animation: none;
   }
 }
+
+/* Cursor "client" (ClientCursor.tsx). */
+.client-cursor__ring {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 1px solid var(--color-neon);
+  border-radius: 9999px;
+  box-shadow: 0 0 12px -2px var(--color-neon);
+  transition:
+    width 0.2s,
+    height 0.2s,
+    margin 0.2s,
+    background 0.2s;
+}
+.client-cursor[data-hover="1"] .client-cursor__ring {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  background: color-mix(in srgb, var(--color-neon) 10%, transparent);
+}
+.client-cursor[data-down="1"] .client-cursor__ring {
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+}
+.client-cursor__label {
+  position: absolute;
+  left: 20px;
+  top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-neon);
+  opacity: 0.8;
+  white-space: nowrap;
+}

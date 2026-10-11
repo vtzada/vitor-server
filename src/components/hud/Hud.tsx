@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { bugs, TOTAL_BUGS } from "@/lib/bugs";
 import {
   resetBugs,
   sendRequest,
+  setDark,
   useServer,
   type HttpMethod,
 } from "@/lib/server-store";
@@ -40,15 +41,12 @@ export function Hud() {
   return (
     <header className="fixed inset-x-0 top-0 z-30 border-b border-line bg-bg/80 font-mono text-xs backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
+        <StatusLed />
         <Link
           href="/#home"
           onClick={() => sendRequest("GET", "/")}
           className="flex items-center gap-2 text-fg"
         >
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-neon opacity-60" />
-            <span className="relative inline-flex size-2 rounded-full bg-neon" />
-          </span>
           vitor-server<span className="text-muted">:8080</span>
         </Link>
 
@@ -99,6 +97,36 @@ export function Hud() {
         ))}
       </nav>
     </header>
+  );
+}
+
+/** LED de status. Cinco cliques seguidos "derrubam a energia" (modo manutenção). */
+function StatusLed() {
+  const dark = useServer((s) => s.dark);
+  const clicks = useRef<number[]>([]);
+  return (
+    <button
+      type="button"
+      aria-label="Status do servidor"
+      onClick={() => {
+        const now = Date.now();
+        clicks.current = [...clicks.current.filter((t) => now - t < 2000), now];
+        if (clicks.current.length >= 5) {
+          clicks.current = [];
+          setDark(!dark);
+        }
+      }}
+      className="relative -m-2 flex p-2"
+    >
+      <span className="relative flex size-2">
+        <span
+          className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${dark ? "bg-amber" : "bg-neon"}`}
+        />
+        <span
+          className={`relative inline-flex size-2 rounded-full ${dark ? "bg-amber" : "bg-neon"}`}
+        />
+      </span>
+    </button>
   );
 }
 

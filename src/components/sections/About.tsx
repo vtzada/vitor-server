@@ -47,14 +47,22 @@ export function About() {
     <section
       ref={ref}
       id="about"
-      className="mx-auto max-w-6xl px-4 pt-28 pb-12"
+      className="relative z-10 mx-auto max-w-6xl px-4 pt-28 pb-12"
     >
-      <SectionHeader method="GET" path="/api/vitor" title="Sobre mim">
+      <SectionHeader
+        method="GET"
+        path="/api/vitor"
+        title="Sobre mim"
+        ghostId="title-about"
+      >
         Em vez de um parágrafo, um endpoint. Esta resposta vem de uma rota real
         deste site.
       </SectionHeader>
 
-      <div className="overflow-hidden rounded-lg border border-line bg-panel font-mono text-xs sm:text-sm">
+      <div
+        data-reveal-section
+        className="overflow-hidden rounded-lg border border-line bg-panel font-mono text-xs sm:text-sm"
+      >
         <div className="flex flex-wrap items-center gap-2 border-b border-line p-2">
           <span className="rounded bg-cyan/10 px-2 py-1 text-cyan">GET</span>
           <span className="min-w-0 flex-1 truncate rounded bg-bg px-2 py-1 text-fg">

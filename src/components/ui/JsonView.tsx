@@ -4,7 +4,7 @@ const INDENT = "  ";
 
 export function JsonView({ value }: { value: unknown }) {
   return (
-    <pre className="leading-relaxed whitespace-pre-wrap break-words">
+    <pre className="leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]">
       {render(value, 0)}
     </pre>
   );

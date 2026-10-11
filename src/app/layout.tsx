@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { LEAKED_JWT } from "@/lib/jwt";
 import { BOOT_SEEN_SCRIPT } from "@/components/boot/BootIntro";
 import { ServerShell } from "@/components/ServerShell";
 import "./globals.css";
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
   title: "vitor-server :: Vitor Theodoro",
   description:
     "Portfólio do Vitor Theodoro, dev backend Java/Spring. O site é um servidor rodando: cada clique vira uma requisição.",
+  // TODO(dev): remover token de debug antes do deploy. (não removi, é um easter egg)
+  other: { "x-debug-token": LEAKED_JWT },
 };
 
 export const viewport: Viewport = {
