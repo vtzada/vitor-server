@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { sendRequest } from "@/lib/server-store";
 import { JsonView } from "../ui/JsonView";
+import { GitLog } from "./GitLog";
 import { SectionHeader } from "./SectionHeader";
 
 /** "Sobre" é um GET /api/vitor de verdade, disparado ao entrar na tela. */
@@ -55,46 +56,51 @@ export function About() {
         title="Sobre mim"
         ghostId="title-about"
       >
-        Em vez de um parágrafo, um endpoint. Esta resposta vem de uma rota real
-        deste site.
+        Em vez de um parágrafo, um endpoint e um histórico de commits. A
+        resposta da esquerda vem de uma rota real deste site.
       </SectionHeader>
 
-      <div
-        data-reveal-section
-        className="overflow-hidden rounded-lg border border-line bg-panel font-mono text-xs sm:text-sm"
-      >
-        <div className="flex flex-wrap items-center gap-2 border-b border-line p-2">
-          <span className="rounded bg-cyan/10 px-2 py-1 text-cyan">GET</span>
-          <span className="min-w-0 flex-1 truncate rounded bg-bg px-2 py-1 text-fg">
-            /api/vitor
-          </span>
-          <button
-            type="button"
-            onClick={send}
-            disabled={loading}
-            className="rounded bg-neon px-3 py-1 font-semibold text-bg transition hover:brightness-110 disabled:opacity-50"
-          >
-            {loading ? "..." : "Send"}
-          </button>
+      <div className="grid items-start gap-4 lg:grid-cols-2">
+        <div
+          data-reveal-section
+          className="min-w-0 overflow-hidden rounded-lg border border-line bg-panel font-mono text-xs sm:text-sm"
+        >
+          <div className="flex flex-wrap items-center gap-2 border-b border-line p-2">
+            <span className="rounded bg-cyan/10 px-2 py-1 text-cyan">GET</span>
+            <span className="min-w-0 flex-1 truncate rounded bg-bg px-2 py-1 text-fg">
+              /api/vitor
+            </span>
+            <button
+              type="button"
+              onClick={send}
+              disabled={loading}
+              className="rounded bg-neon px-3 py-1 font-semibold text-bg transition hover:brightness-110 disabled:opacity-50"
+            >
+              {loading ? "..." : "Send"}
+            </button>
+          </div>
+          <div className="flex gap-4 border-b border-line px-3 py-1.5 text-[11px] text-muted">
+            {meta ? (
+              <>
+                <span>
+                  Status <span className="text-neon">{meta.status} OK</span>
+                </span>
+                <span>Time {meta.ms}ms</span>
+              </>
+            ) : (
+              <span>aguardando envio</span>
+            )}
+          </div>
+          <div className="max-h-[520px] overflow-auto p-4">
+            {data ? (
+              <JsonView value={data} />
+            ) : (
+              <span className="caret text-muted" />
+            )}
+          </div>
         </div>
-        <div className="flex gap-4 border-b border-line px-3 py-1.5 text-[11px] text-muted">
-          {meta ? (
-            <>
-              <span>
-                Status <span className="text-neon">{meta.status} OK</span>
-              </span>
-              <span>Time {meta.ms}ms</span>
-            </>
-          ) : (
-            <span>aguardando envio</span>
-          )}
-        </div>
-        <div className="max-h-[520px] overflow-auto p-4">
-          {data ? (
-            <JsonView value={data} />
-          ) : (
-            <span className="caret text-muted" />
-          )}
+        <div data-reveal-section className="min-w-0">
+          <GitLog />
         </div>
       </div>
     </section>

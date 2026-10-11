@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { profile, services } from "@/lib/content";
 import { decodeJwt } from "@/lib/jwt";
+import { playKey } from "@/lib/sound";
 import {
   emitPacket,
   findBug,
@@ -550,7 +551,10 @@ export function Terminal() {
           <input
             ref={inputRef}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => {
+              setValue(e.target.value);
+              playKey();
+            }}
             onKeyDown={onKeyDown}
             spellCheck={false}
             autoCapitalize="off"

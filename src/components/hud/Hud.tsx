@@ -10,6 +10,7 @@ import {
   useServer,
   type HttpMethod,
 } from "@/lib/server-store";
+import { isSoundOn, onSoundChange, setSound } from "@/lib/sound";
 
 const NAV: { method: HttpMethod; path: string; href: string; label: string }[] =
   [
@@ -73,6 +74,7 @@ export function Hud() {
             uptime <span className="text-fg">{uptime}</span> · reqs{" "}
             <span className="text-fg">{requests}</span>
           </span>
+          <SoundToggle />
           <BugCounter />
         </div>
       </div>
@@ -126,6 +128,38 @@ function StatusLed() {
           className={`relative inline-flex size-2 rounded-full ${dark ? "bg-amber" : "bg-neon"}`}
         />
       </span>
+    </button>
+  );
+}
+
+function SoundToggle() {
+  const [on, setOn] = useState(false);
+  useEffect(() => onSoundChange(setOn), []);
+
+  return (
+    <button
+      type="button"
+      onClick={() => setSound(!isSoundOn())}
+      aria-pressed={on}
+      title={on ? "Desligar sons do servidor" : "Ligar sons do servidor"}
+      className={`grid h-[26px] place-items-center rounded border px-2 transition ${on ? "border-neon/60 text-neon" : "border-line text-muted hover:text-fg"}`}
+    >
+      <svg
+        viewBox="0 0 16 16"
+        className="size-3.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        aria-hidden
+      >
+        <path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor" stroke="none" />
+        {on ? (
+          <path d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.5a6 6 0 0 1 0 9" />
+        ) : (
+          <path d="M11 6l4 4M15 6l-4 4" />
+        )}
+      </svg>
+      <span className="sr-only">{on ? "som ligado" : "som desligado"}</span>
     </button>
   );
 }
