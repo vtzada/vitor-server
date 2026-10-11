@@ -30,8 +30,29 @@ npm run dev
 | `src/components/sections/` | Hero, mapa de serviços, `GET /api/vitor` e `POST /contact`. |
 | `src/app/api/vitor/route.ts` | Endpoint real consumido pela seção "Sobre". |
 
-## Easter eggs prontos
+## Easter eggs
 
-7 de 13: SQL injection no contato (403), `/teapot` (418), qualquer rota inexistente (404), Konami code (crash + stack trace), pular o boot, spam de cliques (429) e `/actuator/health`.
+Os 13 estão implementados. Spoilers:
 
-Faltam: fantasma do GhostWriter, JWT escondido no código-fonte, replay de eventos Kafka, modo manutenção, café e sudo.
+| Bug | Como achar |
+| --- | --- |
+| 403 boa tentativa | SQL injection no body do `POST /contact` |
+| 418 I'm a teapot | abrir `/teapot` |
+| 404 pacote perdido | qualquer rota inexistente |
+| Fantasma no título | clicar no fantasma do GhostWriter quando ele atravessar a tela |
+| Servidor derrubado | Konami code (↑↑↓↓←→←→BA) |
+| Token vazado | decodificar o JWT do `<meta name="x-debug-token">` com `jwt decode` no terminal |
+| Apressadinho | pular o boot com Esc |
+| 429 Too Many Requests | clicar rápido demais na navegação |
+| Health check | abrir `/actuator/health` |
+| Replay de eventos | `kafka replay` no terminal |
+| Modo manutenção | `lights off` no terminal ou 5 cliques no LED do topo |
+| Java de verdade | `coffee` no terminal |
+| sudo | `sudo` no terminal |
+
+## Peças imersivas
+
+- `src/components/network/NetworkBackground.tsx`: rede viva em canvas 2D no fundo. Cada clique e cada requisição vira pacote.
+- `src/components/terminal/Terminal.tsx`: terminal digitável do hero (histórico, Tab, comandos escondidos).
+- `src/components/map/ArchitectureMap.tsx`: mapa 3D com React Three Fiber, carregado só quando a seção se aproxima.
+- `src/components/ui/DecodeText.tsx`: títulos que chegam "decodificando" de hex.

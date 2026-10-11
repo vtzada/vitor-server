@@ -99,8 +99,16 @@ export function Contact() {
   const ok = result && result.status < 300;
 
   return (
-    <section id="contact" className="mx-auto max-w-6xl px-4 pt-28 pb-40">
-      <SectionHeader method="POST" path="/contact" title="Contato">
+    <section
+      id="contact"
+      className="relative z-10 mx-auto max-w-6xl px-4 pt-28 pb-40"
+    >
+      <SectionHeader
+        method="POST"
+        path="/contact"
+        title="Contato"
+        ghostId="title-contact"
+      >
         Monte o body e mande a requisição. Se preferir o caminho tradicional,
         tem o{" "}
         <a
@@ -114,7 +122,10 @@ export function Contact() {
         .
       </SectionHeader>
 
-      <div className="grid overflow-hidden rounded-lg border border-line bg-panel font-mono text-xs sm:text-sm lg:grid-cols-2">
+      <div
+        data-reveal-section
+        className="grid overflow-hidden rounded-lg border border-line bg-panel font-mono text-xs sm:text-sm lg:grid-cols-2"
+      >
         <div className="border-b border-line lg:border-r lg:border-b-0">
           <div className="flex items-center gap-2 border-b border-line p-2">
             <span className="rounded bg-amber/10 px-2 py-1 text-amber">

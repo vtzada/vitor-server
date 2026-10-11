@@ -32,6 +32,12 @@ export function KonamiCrash() {
   useEffect(() => {
     let pos = 0;
     const onKey = (e: KeyboardEvent) => {
+      // Setas no terminal navegam o histórico; não contam para o Konami.
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      )
+        return;
       const expected = SEQUENCE[pos];
       pos =
         e.key.toLowerCase() === expected.toLowerCase()

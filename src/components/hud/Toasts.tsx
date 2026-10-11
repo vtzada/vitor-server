@@ -7,9 +7,9 @@ export function Toasts() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-4 top-24 z-50 sm:inset-x-auto sm:top-auto sm:bottom-4 sm:left-4 flex flex-col gap-2 font-mono text-xs md:top-16"
+      className="pointer-events-none fixed inset-x-4 top-24 z-50 sm:inset-x-auto sm:top-auto sm:bottom-4 sm:left-4 flex flex-col gap-2 [&>*:not(:last-child)]:hidden sm:[&>*]:!block font-mono text-xs"
     >
-      {toasts.map((t) => (
+      {toasts.slice(-3).map((t) => (
         <div
           key={t.id}
           className="rounded-lg border border-error/60 bg-panel/95 px-3 py-2 shadow-[0_0_30px_-10px_var(--color-error)]"

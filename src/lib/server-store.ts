@@ -29,6 +29,17 @@ interface ServerState {
   found: string[];
   toasts: Toast[];
   booted: boolean;
+  /** Texto que o fantasma do GhostWriter está reescrevendo agora. */
+  ghost: { target: string; text: string } | null;
+  /** Modo manutenção: luzes apagadas, só a lanterna do cursor. */
+  dark: boolean;
+}
+
+/** Evento para o fundo de rede desenhar um pacote quando uma requisição sai. */
+export interface PacketEvent {
+  status: number;
+  x?: number;
+  y?: number;
 }
 
 const STORAGE_KEY = "vitor-server:bugs";
@@ -42,9 +53,12 @@ const initialServerState: ServerState = {
   found: [],
   toasts: [],
   booted: false,
+  ghost: null,
+  dark: false,
 };
 let state = initialServerState;
 const listeners = new Set<() => void>();
+const packetListeners = new Set<(e: PacketEvent) => void>();
 const pending = new Map<number, (req: HttpRequest) => void>();
 let nextId = 1;
 let recent: number[] = [];
@@ -65,6 +79,36 @@ export function useServer<T>(selector: (s: ServerState) => T): T {
     () => selector(state),
     () => selector(initialServerState),
   );
+}
+
+export function onPacket(listener: (e: PacketEvent) => void) {
+  packetListeners.add(listener);
+  return () => {
+    packetListeners.delete(listener);
+  };
+}
+
+export function emitPacket(e: PacketEvent) {
+  packetListeners.forEach((l) => l(e));
+}
+
+export function setGhost(ghost: ServerState["ghost"]) {
+  emit({ ghost });
+}
+
+export function setDark(dark: boolean) {
+  emit({ dark });
+  if (dark) findBug("dark-room");
+}
+
+/** Kafka nunca esquece: reenvia as últimas requisições do access log. */
+export function replayLog(limit = 8) {
+  const events = state.log.slice(0, limit).reverse();
+  events.forEach((req, i) =>
+    setTimeout(() => sendRequest(req.method, req.path, req.status), i * 180),
+  );
+  findBug("kafka-replay");
+  return events.length;
 }
 
 export function hydrateBugs() {
@@ -135,6 +179,7 @@ export function sendRequest(
     startedAt: now,
   };
   emit({ queue: [...state.queue, req] });
+  emitPacket({ status: req.status });
   return new Promise((resolve) => pending.set(req.id, resolve));
 }
 
