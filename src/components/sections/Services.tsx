@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { services } from "@/lib/content";
 import { sendRequest } from "@/lib/server-store";
 import type { Burst } from "../map/ArchitectureMap";
+import { LivePreview } from "../map/LivePreview";
 import { SectionHeader } from "./SectionHeader";
 
 const ArchitectureMap = dynamic(() => import("../map/ArchitectureMap"), {
@@ -32,6 +33,7 @@ function hasWebGL() {
 /** Projetos como microsserviços num mapa 3D de arquitetura. */
 export function Services() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const [bursts, setBursts] = useState<Burst[]>([]);
   const [near, setNear] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -59,11 +61,13 @@ export function Services() {
 
   function select(id: string) {
     setSelected(id);
+    setPreviewId(id);
     setBursts((b) => [...b, { key: burstKey.current++, id }]);
     sendRequest("GET", `/services/${id}/health`);
   }
 
   const svc = services.find((s) => s.id === selected);
+  const preview = services.find((s) => s.id === previewId);
 
   return (
     <section
@@ -83,7 +87,7 @@ export function Services() {
       <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
         <div
           ref={mapRef}
-          className="relative h-[380px] overflow-hidden rounded-lg border border-line bg-panel/40 sm:h-[520px]"
+          className="relative isolate h-[380px] overflow-hidden rounded-lg border border-line bg-panel/40 sm:h-[520px]"
         >
           <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
           {near && webgl && (
@@ -106,6 +110,18 @@ export function Services() {
           <p className="pointer-events-none absolute bottom-3 left-3 font-mono text-[10px] text-muted">
             {services.length} serviços · 1 gateway · eventos no kafka
           </p>
+          {preview && (
+            // Os rótulos do drei usam z-index altíssimo; o preview fica acima deles.
+            <div
+              className="absolute right-3 bottom-3 hidden w-[44%] max-w-[340px] sm:block"
+              style={{ zIndex: 16777272 }}
+            >
+              <LivePreview
+                service={preview}
+                onClose={() => setPreviewId(null)}
+              />
+            </div>
+          )}
         </div>
 
         <aside className="flex flex-col gap-3">
@@ -130,6 +146,14 @@ export function Services() {
             ))}
           </ul>
 
+          {preview && (
+            <div className="sm:hidden">
+              <LivePreview
+                service={preview}
+                onClose={() => setPreviewId(null)}
+              />
+            </div>
+          )}
           <div
             className="flex-1 rounded-lg border border-line bg-panel p-4"
             aria-live="polite"

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { findBug, markBooted } from "@/lib/server-store";
 import { services } from "@/lib/content";
+import { Handshake } from "./Handshake";
 
 const SEEN_KEY = "vitor-server:booted";
 
@@ -77,6 +78,7 @@ export const BOOT_SEEN_SCRIPT = `try{if(sessionStorage.getItem("${SEEN_KEY}")===
 
 export function BootIntro() {
   const [visible, setVisible] = useState(true);
+  const [handshake, setHandshake] = useState(false);
   // Um timestamp por linha já impressa, gerado no momento em que a linha aparece.
   const [stamps, setStamps] = useState<string[]>([]);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -118,6 +120,8 @@ export function BootIntro() {
     };
   }, []);
 
+  const endHandshake = useCallback(() => setHandshake(false), []);
+
   function close(skipped: boolean) {
     if (closing.current) return;
     closing.current = true;
@@ -130,6 +134,7 @@ export function BootIntro() {
     markBooted();
     const finish = () => {
       setVisible(false);
+      setHandshake(true);
       if (skipped) findBug("boot-skip");
     };
     if (!rootRef.current) return finish();
@@ -141,7 +146,7 @@ export function BootIntro() {
     });
   }
 
-  if (!visible) return null;
+  if (!visible) return handshake ? <Handshake onDone={endHandshake} /> : null;
 
   return (
     <div
